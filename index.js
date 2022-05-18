@@ -26,9 +26,11 @@ Use getFinals to do the following:
 💡 HINT - you should be looking at the stage key inside of the objects
 */
 
-function getFinals(/* code here */) {
-    /* code here */
+function getFinals(array) {
+    const inFinals = array.filter(game => game['Stage'] === 'Final');
+    return inFinals;
  }
+// console.log(getFinals(fifaData))
 
 
 
@@ -38,10 +40,12 @@ Use the higher-order function called getYears to do the following:
 2. Receive a callback function as the second parameter that will take getFinals from task 2 as an argument
 3. Return an array called years containing all of the years in the getFinals data set*/
 
-function getYears(/* code here */) {
-    /* code here */
+function getYears(array, finalsCB) {
+    const inFinals = finalsCB(array);
+    const yearArr = inFinals.map(finalist => finalist['Year']);
+    return yearArr;
 }
-
+// console.log(getYears(fifaData, getFinals))
 
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 4: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀
@@ -52,9 +56,18 @@ Use the higher-order function getWinners to do the following:
 💡 HINT: Don't worry about ties for now (Please see the README file for info on ties for a stretch goal.)
 4. Returns the names of all winning countries in an array called `winners` */ 
 
-function getWinners(/* code here */) {
-    /* code here */
+function getWinners(array, finalsCB) {
+    const inFinals = finalsCB(array);
+    const winners = inFinals.map((game) => {
+        if (game['Home Team Goals'] < game['Away Team Goals']) {
+            return game['Away Team Name'];
+        } else {
+            return game['Home Team Name'];
+        }
+    });
+    return winners;
 }
+// console.log(getWinners(fifaData, getFinals))
 
 
 
@@ -69,9 +82,14 @@ Use the higher-order function getWinnersByYear to do the following:
 💡 HINT: the strings returned need to exactly match the string in step 4.
  */
 
-function getWinnersByYear(/* code here */) {
-    /* code here */
+function getWinnersByYear(array, finalsCB, yearsCB, winnersCB) {
+    const years = yearsCB(array, finalsCB);
+    const countries = winnersCB(array, finalsCB)
+    
+    const winnerStrings = years.map((year, i) => `In ${year}, ${countries[i]} won the world cup!`);
+    return winnerStrings;
 }
+//console.log(getWinnersByYear(fifaData, getFinals, getYears, getWinners));
 
 
 
@@ -88,10 +106,14 @@ Use the higher order function getAverageGoals to do the following:
  
 */
 
-function getAverageGoals(/* code here */) {
-    /* code here */
+function getAverageGoals(finalsArray) {
+    const totalGoals = finalsArray.reduce((acc, curr) => {
+        return acc + (curr['Home Team Goals'] + curr['Away Team Goals']);
+    }, 0);
+    return (totalGoals / finalsArray.length).toFixed(2);
+    
  }
-
+ // console.log(getAverageGoals(getFinals(fifaData)))
 
 
 
@@ -103,22 +125,35 @@ Create a function called `getCountryWins` that takes the parameters `data` and `
 Hint: Investigate your data to find "team initials"!
 Hint: use `.reduce` */
 
-function getCountryWins(/* code here */) {
-
-    /* code here */
-
+function getCountryWins(array, initials) {
+    const initialsArr = array.map(game => {
+        if (game['Home Team Goals'] > game['Away Team Goals']) {
+            return game['Home Team Initials'];
+        } else if (game['Home Team Goals'] < game['Away Team Goals']) {
+            return game['Away Team Initials'];
+        } else {
+            return 'Tie'
+        }
+    });
+    const winnerInitials = initialsArr.filter(init => init === initials);
+    return winnerInitials.length;
 }
+// console.log(getCountryWins(fifaData, 'SUI'))
 
 
 
 /* 💪💪💪💪💪 Stretch 2: 💪💪💪💪💪 
 Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
 
-function getGoals(/* code here */) {
+function getGoals(array) {
+    const awayTeams = array.map(game => game['Away Team Name']);
+    const homeTeams = array.map(game => game['Home Team Name']);
+    const awayScores = array.map(game => game['Away Team Goals']);
+    const homeScores = array.map(game => game['Home Team Goals']);
 
-    /* code here */
-
+    
 }
+console.log(getGoals(fifaData))
 
 
 /* 💪💪💪💪💪 Stretch 3: 💪💪💪💪💪
